@@ -40,5 +40,7 @@ private:
 
 	void TickActor(float DeltaTime, enum ELevelTick TickType, FActorTickFunction& ThisTickFunction) override;
 
-	void NotifyActorBeginOverlap(AActor* OtherActor);
+	void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
+	void NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 };

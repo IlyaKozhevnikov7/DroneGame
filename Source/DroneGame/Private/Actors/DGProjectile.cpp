@@ -29,14 +29,21 @@ void ADGProjectile::TickActor(float DeltaTime, enum ELevelTick TickType, FActorT
 	Super::TickActor(DeltaTime, TickType, ThisTickFunction);
 
 	const FVector DeltaLocation = GetActorForwardVector() * Speed * DeltaTime;
-	SetActorLocation(GetActorLocation() + DeltaLocation);
+	SetActorLocation(GetActorLocation() + DeltaLocation, true);
 }
 
 void ADGProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 {
+	Super::NotifyActorBeginOverlap(OtherActor);
+
 	if (UDGHealthComponent* Health = OtherActor->GetComponentByClass<UDGHealthComponent>())
-	{
-		Health->TakeDamage(DamageAmount);
-		Destroy();
-	}
+		Health->AddHealth(-DamageAmount);
+
+	Destroy();
+}
+
+void ADGProjectile::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
+{
+	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
+	Destroy();
 }
