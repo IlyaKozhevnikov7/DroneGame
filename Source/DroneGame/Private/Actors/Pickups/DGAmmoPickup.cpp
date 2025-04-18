@@ -6,5 +6,8 @@
 void ADGAmmoPickup::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	if (UDGCannonComponent* Cannon = OtherActor->GetComponentByClass<UDGCannonComponent>())
+	{
 		Cannon->AddAmmo(Amount);
+		Destroy();
+	}
 }

@@ -20,8 +20,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UStaticMeshComponent> Mesh;
-	
+
 public:
 
 	ADGPickupBase();
+
+private:
+
+	void Tick(float DeltaSeconds) override;
 };

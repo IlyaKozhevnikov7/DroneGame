@@ -9,29 +9,20 @@ UDGHealthComponent::UDGHealthComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UDGHealthComponent::BeginPlay()
+void UDGHealthComponent::AddHealth(int32 Amount)
 {
-	Super::BeginPlay();
-
-	if (GetOwner() == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UDGHealthComponent::BeginPlay GetOwner return nullprt."));
-		return;
-	}
-
-	USphereComponent* Collision = GetOwner()->GetComponentByClass<USphereComponent>();
-	if (Collision == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UDGHealthComponent::BeginPlay failed to get USphereComponent from %s."), *GetOwner()->GetName());
-		return;
-	}
-
-	Collision->OnComponentBeginOverlap.AddDynamic(this, &UDGHealthComponent::OnCollisionBeginOverlap);
+	SetHealth(CurrentHealth + Amount);
 }
 
-void UDGHealthComponent::OnCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void UDGHealthComponent::SetHealth(int32 Amount)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UDGHealthComponent::OnCollisionBeginOverlap %s."), *(OtherActor->GetName()));
+	if (CurrentHealth == Amount)
+		return;
+
+	const int32 Delta = Amount - CurrentHealth;
+	CurrentHealth = FMath::Clamp(Amount, 0, MaxHealth);
+	OnHealthChanged.Broadcast(this, Delta);
+
+	if (CurrentHealth == 0)
+		OnDied.Broadcast(GetOwner());
 }
-
-

@@ -13,4 +13,22 @@ ADGPickupBase::ADGPickupBase()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	Mesh->SetupAttachment(Collision);
+
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
+}
+
+void ADGPickupBase::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	constexpr float RotationSpeed = 50.f;
+	constexpr float Amplitude = 15.f;
+	constexpr float Frequency = 1.5f;
+
+	Mesh->AddWorldRotation(FRotator(0.f, RotationSpeed * DeltaSeconds, 0.f));
+
+	FVector NewLocation = Mesh->GetRelativeLocation();
+	NewLocation.Z = Amplitude * FMath::Sin(Frequency * GetWorld()->GetTimeSeconds());
+	Mesh->SetRelativeLocation(NewLocation);
 }
