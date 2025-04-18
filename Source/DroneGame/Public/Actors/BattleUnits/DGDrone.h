@@ -3,14 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "Actors/BattleUnits/DGBattleUnit.h"
 #include "DGDrone.generated.h"
 
 class USphereComponent;
 class UCameraComponent;
+class UDGCannonComponent;
+class UUserWidget;
+enum class EDGMatchResult : uint8;
 
 UCLASS()
-class DRONEGAME_API ADGDrone : public APawn
+class DRONEGAME_API ADGDrone : public ADGBattleUnit
 {
 	GENERATED_BODY()
 
@@ -29,10 +32,7 @@ private:
 	float PitchConstraint = 45.f;
 
 	UPROPERTY(EditDefaultsOnly)
-	USphereComponent* Collision = nullptr;
-
-	UPROPERTY(EditDefaultsOnly)
-	UCameraComponent* Camera = nullptr;
+	TObjectPtr<UCameraComponent> Camera;
 
 	FVector MoveDirection;
 
@@ -46,7 +46,11 @@ public:
 
 private:
 
-	virtual void Tick(float DeltaTime) override;
+	void BeginPlay() override;
+
+	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+	void Tick(float DeltaTime) override;
 
 public:
 
@@ -62,4 +66,15 @@ public:
 private:
 
 	void UpdateLocation(float DeltaTime);
+
+	void MoveForward(float Direction);
+
+	void MoveRight(float Direction);
+
+	void MoveUp(float Direction);
+
+
+
+	UFUNCTION()
+	void OnMatchEnded(EDGMatchResult Result);
 };
